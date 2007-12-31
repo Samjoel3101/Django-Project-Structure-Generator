@@ -18,12 +18,13 @@ class Generate_Structure:
         return [h(self.args[0]) for h in handlers]
 
     def _init_printers(self, printers):
-        printers = []
+        printers_ = []
         for idx, p_grps in enumerate(printers):
             printer_grp = []
             for p in p_grps:
                 printer_grp.append(p(*self.args, self.handlers[idx]))
-        printer = Merger(*self.args, None, printers = printers)
+            printers_.append(printer_grp)
+        printer = Merger(*self.args, None, printers = printers_)
         return printer 
 
     def print_info(self):

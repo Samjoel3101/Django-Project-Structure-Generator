@@ -2,6 +2,7 @@ import ast
 import re 
 from pathlib import Path 
 import numpy as np 
+from . import styles
 
 def P(pth):
     if '\\' in pth:
@@ -25,18 +26,17 @@ def calculate_offset(lines_list):
 
 class Printer:  
     verbose_name = '_info'
-    def __init__(self, filename, save_path, ext, handler, **kwargs):
+    def __init__(self, filename, save_path, ext, handler, style = styles.default, **kwargs):
         self.save_path = save_path
         if save_path is not None:
             if not self.save_path.endswith('/'):
                 self.save_path += '/' if '/' in self.save_path else '\\'
         self.filename = filename 
         self.ext = ext
-        self.print_header = True
         if handler is not None:
-            self.handler = handler
-        self.kwargs = kwargs 
-        self.set_prefix_suffix()
+            self.handler = handler 
+        self.style = style
+        self.set_styles()
 
     def txt_writer(self, reset = False, *args, **kwargs): 
         mode = 'w+' if not self.path.exists() else 'r+'
@@ -50,8 +50,9 @@ class Printer:
     def create_content(self, *args, **kwargs): raise NotImplementedError
 
     def content(self, content):
-        content = [self.prefix + c + self.suffix for c in lst_flatten(content)]
-        return self.header + content if self.print_header else content 
+        content =  [self.prefix + c + self.suffix for c in lst_flatten(content)] 
+        content = self.header + content if self.header else content 
+        return [self.content_prefix] + content + [self.content_suffix]
     
     @property
     def path(self):
@@ -70,18 +71,15 @@ class Printer:
     @property 
     def header(self):
         name = re.sub('Printer', '', self.__class__.__name__)
-        return [f"{'*'*15} {name} {'*'*15}\n"]
+        return [f"{self.header_prefix} {name} {self.header_suffix}\n"]
 
-    def set_prefix_suffix(self):
-        header = self.kwargs.get('header')
-        self.print_header = header if header is not None else True
-        prefix, suffix = self.kwargs.get('prefix'), self.kwargs.get('suffix')
-        self.prefix = prefix if prefix else ''
-        self.suffix = suffix if suffix else ''
+    def set_styles(self):
+        for style in self.style:
+            setattr(self, style, self.style[style])
 
 class Merger(Printer):
     verbose_name = '_info'
-    def __init__(self, filename, save_path, ext, handler, printers = None):
+    def __init__(self, filename, save_path, ext, handler, printers):
         super().__init__(filename, save_path, ext, handler)
         self.printers = printers 
 

@@ -1,13 +1,15 @@
 from .core import * 
+from functools import partial 
+from . import styles
 
 __all__ = ['ClassPrinter', 'FunctionPrinter', 'MergePrinter', 'ClassInlinePrinter', 'FunctionInlinePrinter']
 
 class ClassPrinter(Printer):
     verbose_name = '_class_info'
-    def __init__(self, filename, save_path, ext, handler):
+    def __init__(self, filename, save_path, ext, handler, **kwargs):
         self.args = (filename, save_path, ext, handler)
-        super().__init__(*self.args)
-        self.func_printer = FunctionInlinePrinter(*self.args, prefix = '\t')
+        super().__init__(*self.args, **kwargs)
+        self.func_printer = FunctionInlinePrinter(*self.args, prefix = '\t', header = False)
         
     def create_content(self, class_):
         content = [f'Class Name: {class_.name}\n']
@@ -75,4 +77,7 @@ class ClassInlinePrinter(ClassPrinter):
 class FunctionInlinePrinter(FunctionPrinter):
     def create_content(self, func):
         content = [f'Function Name: {func.name}\n']
-        return super(FunctionPrinter, self).content(content, header =  False) 
+        return content
+
+ClassInlinePrinter = partial(ClassInlinePrinter, style = styles.inline)
+FunctionInlinePrinter = partial(FunctionInlinePrinter, style = styles.inline)
