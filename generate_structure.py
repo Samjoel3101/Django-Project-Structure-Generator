@@ -2,8 +2,8 @@ import inspect
 import re 
 import ast 
 from pathlib import Path 
-from printers import ClassPrinter
-filename = 'test_files/b.py'
+from printers import ClassPrinter, FunctionPrinter
+filename = 'test_files/a.py'
  
 class StructureGenerator:
 
@@ -12,6 +12,7 @@ class StructureGenerator:
         self.ext = ext 
         self.save_path = save_path 
         self.class_printer = ClassPrinter(self.filename, self.save_path, self.ext) 
+        self.func_printer  = FunctionPrinter(self.filename, self.save_path, self.ext) 
         self.get_members() 
 
     def get_members(self):
@@ -23,6 +24,8 @@ class StructureGenerator:
     def print_info(self):
         for class_ in self.classes:
             self.class_printer.txt_writer(class_)
+        for func in self.functions:
+            self.func_printer.txt_writer(func)
 
 if __name__ == '__main__':
     s = StructureGenerator(filename)
