@@ -7,40 +7,36 @@ class ClassPrinter(Printer):
     def __init__(self, filename, save_path, ext, handler):
         self.args = (filename, save_path, ext, handler)
         super().__init__(*self.args)
-        self.func_printer = FunctionPrinter(*self.args, new_file = False)
+        self.func_printer = FunctionPrinter(*self.args, prefix = '\t')
         
     def create_content(self, class_):
         content = [f'Class Name: {class_.name}\n']
         class_funcs = [o for o in class_.body if isinstance(o, ast.FunctionDef)]
         for func in class_funcs:
-            content.append(self.func_printer.create_content(func))
+            content.append(self.func_printer.create_content(func,inline = True, header = False))
         return content
     
-    def content(self):
+    def content(self, **kwargs):
         content = []
         for clas in self.handler.classes:
             content += self.create_content(clas) 
-        return self.header + content
+        return super().content(content, **kwargs)
                 
 class FunctionPrinter(Printer):
     verbose_name = '_function_info'
-    def __init__(self, filename, save_path, ext, handler, new_file = True):
-        super().__init__(filename, save_path, ext, handler)
-        self.new_file = new_file
-        self.prefix = '\t' if not self.new_file else ''
-        self.suffix = '\n' 
 
-    def create_content(self, func): 
-        content = [f'Function Name: {func.name}'] 
+    def create_content(self, func, inline = False, **kwargs): 
+        content = [f'Function Name: {func.name}\n'] 
         for arg in func.args.args:
-            content.append(f'\tParameter Name: {arg.arg}')
-        return [self.prefix + o + self.suffix for o in content]
+            content.append(f'\tParameter Name: {arg.arg}\n')
+        return super().content(content, **kwargs) if inline else content 
     
-    def content(self):
+    def content(self, **kwargs):
         content = []
         for func in self.handler.functions:
             content += self.create_content(func)
-        return self.header + content  
+        content = super().content(content, **kwargs)
+        return content  
 
 class MergePrinter(Printer):
     verbose_name = '_info'
@@ -61,7 +57,7 @@ class MergePrinter(Printer):
             func_contents += self.func_printer.create_content(func) + ['\n']
         return class_contents ,func_contents
     
-    def content(self):
+    def content(self, **kwargs):
         class_contents = self.clas_printer.header 
         func_contents  = self.func_printer.header 
         content1, content2 = self.create_content(self.handler.classes, self.handler.functions)

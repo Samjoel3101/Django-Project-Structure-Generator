@@ -25,7 +25,7 @@ def calculate_offset(lines_list):
 
 class Printer:  
     verbose_name = '_info'
-    def __init__(self, filename, save_path, ext, handler):
+    def __init__(self, filename, save_path, ext, handler, **kwargs):
         self.save_path = save_path
         if save_path is not None:
             if not self.save_path.endswith('/'):
@@ -33,20 +33,24 @@ class Printer:
         self.filename = filename 
         self.ext = ext
         if handler is not None:
-            self.handler = handler 
-    
-    def txt_writer(self, reset = False): 
+            self.handler = handler
+        self.kwargs = kwargs 
+        self.set_prefix_suffix()
+
+    def txt_writer(self, reset = False, *args, **kwargs): 
         mode = 'w+' if not self.path.exists() else 'r+'
         prefix = '\n' if mode == 'r+' else ''
         with open(self.path, mode) as info_file:
             cursor = 0 if reset else calculate_offset(info_file.readlines())
             info_file.seek(cursor)
             info_file.write(prefix)
-            info_file.writelines(lst_flatten(self.content()))
+            info_file.writelines(lst_flatten(self.content(*args, **kwargs)))
     
-    def create_content(self): raise NotImplementedError
+    def create_content(self, *args, **kwargs): raise NotImplementedError
 
-    def content(self): raise NotImplementedError
+    def content(self, content, header = True):
+        content = [self.prefix + c + self.suffix for c in lst_flatten(content)]
+        return self.header + content if header else content 
     
     @property
     def path(self):
@@ -66,6 +70,11 @@ class Printer:
     def header(self):
         name = re.sub('Printer', '', self.__class__.__name__)
         return [f"{'*'*15} {name} {'*'*15}\n"]
+
+    def set_prefix_suffix(self):
+        prefix, suffix = self.kwargs.get('prefix'), self.kwargs.get('suffix')
+        self.prefix = prefix if prefix else ''
+        self.suffix = suffix if suffix else ''
 
 class Merger(Printer):
     verbose_name = '_info'
