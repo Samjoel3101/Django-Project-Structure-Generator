@@ -7,21 +7,30 @@ from printer.core import Merger
 from pathlib import Path 
 
 class Generate_Structure:
-    def __init__(self, filename, save_path, ext, printers = [[ImportStatementPrinter], [MergePrinter]]):
+    def __init__(self, filename, save_path, ext, handlers = [HandleFileByString, HandleFileByTree], 
+                                                printers = [[ImportStatementPrinter], [MergePrinter]]):
         self.args = [Path(filename), save_path, ext]
-        self.string_handler = HandleFileByString(filename)
-        self.tree_handler = HandleFileByTree(filename)
+        assert len(handlers) == len(printers)
+        self.handlers = self._init_handlers(handlers) 
         self.printer = self._init_printers(printers)
-    
+
+    def _init_handlers(self, handlers):
+        return [h(self.args[0]) for h in handlers]
+
     def _init_printers(self, printers):
-        string_printers, tree_printers = printers 
-        string_printers = [p(*self.args, self.string_handler) for p in string_printers]
-        tree_printers = [p(*self.args, self.tree_handler) for p in tree_printers]
-        printer = Merger(*self.args, None, printers = [string_printers, tree_printers])
+        printers = []
+        for idx, p_grps in enumerate(printers):
+            printer_grp = []
+            for p in p_grps:
+                printer_grp.append(p(*self.args, self.handlers[idx]))
+        printer = Merger(*self.args, None, printers = printers)
         return printer 
 
     def print_info(self):
         self.printer.txt_writer()
+    
+    def content(self):
+        return self.printer.content()
 
 if __name__ == '__main__':
     filename = 'test_files/a.py'

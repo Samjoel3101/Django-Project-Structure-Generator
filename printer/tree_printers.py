@@ -1,19 +1,19 @@
 from .core import * 
 
-__all__ = ['ClassPrinter', 'FunctionPrinter', 'MergePrinter']
+__all__ = ['ClassPrinter', 'FunctionPrinter', 'MergePrinter', 'ClassInlinePrinter', 'FunctionInlinePrinter']
 
 class ClassPrinter(Printer):
     verbose_name = '_class_info'
     def __init__(self, filename, save_path, ext, handler):
         self.args = (filename, save_path, ext, handler)
         super().__init__(*self.args)
-        self.func_printer = FunctionPrinter(*self.args, prefix = '\t')
+        self.func_printer = FunctionInlinePrinter(*self.args, prefix = '\t')
         
     def create_content(self, class_):
         content = [f'Class Name: {class_.name}\n']
         class_funcs = [o for o in class_.body if isinstance(o, ast.FunctionDef)]
         for func in class_funcs:
-            content.append(self.func_printer.create_content(func,inline = True, header = False))
+            content.append(self.func_printer.create_content(func))
         return content
     
     def content(self, **kwargs):
@@ -63,3 +63,16 @@ class MergePrinter(Printer):
         content1, content2 = self.create_content(self.handler.classes, self.handler.functions)
         class_contents += content1; func_contents += content2 
         return class_contents + func_contents
+
+class ClassInlinePrinter(ClassPrinter):
+    def create_content(self, class_):
+        content = [f'Class Name: {class_.name}:\n']
+        class_funcs = [o for o in class_.body if isinstance(o, ast.FunctionDef)]
+        for func in class_funcs:
+            content += [f'\tFunctions Defined: {func.name}\n']
+        return content 
+    
+class FunctionInlinePrinter(FunctionPrinter):
+    def create_content(self, func):
+        content = [f'Function Name: {func.name}\n']
+        return super(FunctionPrinter, self).content(content, header =  False) 

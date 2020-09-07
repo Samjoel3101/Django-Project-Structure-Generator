@@ -1,4 +1,4 @@
-from file_handler.django.url_file_handler import UrlFileHandler 
+from file_handler.django.file_handler import UrlFileHandler 
 from printer.django.printer import UrlPrinter 
 from printer.core import Merger 
 from pathlib import Path

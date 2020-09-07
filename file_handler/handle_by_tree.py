@@ -3,7 +3,6 @@ import re
 import ast 
 from pathlib import Path 
 from printer.tree_printers import ClassPrinter, FunctionPrinter, MergePrinter 
-filename = 'test_files/a.py'
  
 class HandleFileByTree:
 

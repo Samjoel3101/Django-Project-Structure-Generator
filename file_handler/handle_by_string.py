@@ -39,6 +39,25 @@ class HandleFileByString:
     def parent_package(self):
         return self._check_parent_package().name   
 
+class HandleFileByRegex:
+    def __init__(self, filename, regex):
+        self.filename = Path(filename)
+        self.regex = regex
+        self.contents = self.get_contents()
+         
+    def get_contents(self):
+        results = []
+        with open(self.filename, 'r') as f:
+            for line in f.readlines():
+                result = self._search(line)
+                if result is not None:
+                    results.append(result.group(0))
+        return results 
+        
+    def _search(self, line):
+        match = re.search(self.regex, line)
+        return match 
+
 
 if __name__ == '__main__':
     filename = 'test_files/c.py'

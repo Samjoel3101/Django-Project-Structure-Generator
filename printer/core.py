@@ -32,6 +32,7 @@ class Printer:
                 self.save_path += '/' if '/' in self.save_path else '\\'
         self.filename = filename 
         self.ext = ext
+        self.print_header = True
         if handler is not None:
             self.handler = handler
         self.kwargs = kwargs 
@@ -48,9 +49,9 @@ class Printer:
     
     def create_content(self, *args, **kwargs): raise NotImplementedError
 
-    def content(self, content, header = True):
+    def content(self, content):
         content = [self.prefix + c + self.suffix for c in lst_flatten(content)]
-        return self.header + content if header else content 
+        return self.header + content if self.print_header else content 
     
     @property
     def path(self):
@@ -72,6 +73,8 @@ class Printer:
         return [f"{'*'*15} {name} {'*'*15}\n"]
 
     def set_prefix_suffix(self):
+        header = self.kwargs.get('header')
+        self.print_header = header if header is not None else True
         prefix, suffix = self.kwargs.get('prefix'), self.kwargs.get('suffix')
         self.prefix = prefix if prefix else ''
         self.suffix = suffix if suffix else ''
