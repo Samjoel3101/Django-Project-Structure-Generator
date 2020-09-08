@@ -1,9 +1,10 @@
 from printer.core import Printer
 from functools import partial  
+from .. import styles 
 
 class UrlPrinter(Printer):
     verbose_name = '_url_info'
-    def create_content(self, url_tup, parent_path = None):
+    def create_content(self, url_tup, parent_path = ['']):
         url, name = url_tup 
         content = parent_path + [f'{url}\t\t{name}\n']
         return content 
@@ -33,5 +34,5 @@ class ModelInlinePrinter(ModelPrinter):
     def create_content(self, attr_list):
         return [] 
 
-ModelInlinePrinter = partial(ModelInlinePrinter, prefix = '\t', header = False) 
-
+ModelInlinePrinter = partial(ModelInlinePrinter, style = styles.inline) 
+UrlInlinePrinter   = partial(UrlPrinter, style = styles.inline)

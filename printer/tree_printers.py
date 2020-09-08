@@ -9,7 +9,7 @@ class ClassPrinter(Printer):
     def __init__(self, filename, save_path, ext, handler, **kwargs):
         self.args = (filename, save_path, ext, handler)
         super().__init__(*self.args, **kwargs)
-        self.func_printer = FunctionInlinePrinter(*self.args, prefix = '\t', header = False)
+        self.func_printer = FunctionInlinePrinter(*self.args)
         
     def create_content(self, class_):
         content = [f'Class Name: {class_.name}\n']
