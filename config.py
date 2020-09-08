@@ -13,3 +13,4 @@ INFO_DICT = {
     'mixins':   [[HandleFileByTree], [ClassPrinter]],
     'urls'  :   [[UrlFileHandler], [UrlPrinter]]
 }
+
