@@ -35,8 +35,9 @@ class Orchestrator:
         return filenames
 
 class App_Structurer:
-    def __init__(self, app_dir):
+    def __init__(self, app_dir, save_path):
         self.orchestrator = Orchestrator(app_dir)
+        self.save_path = save_path
         self.structurers = self.setup_structure_generators()
 
     def setup_structure_generators(self):
@@ -56,6 +57,6 @@ class App_Structurer:
 
     def print_info(self):
         app_dir = self.orchestrator.app_dir 
-        merger = ContentMerger(None, app_dir, '.txt', None, self.content)
+        merger = ContentMerger(None, self.save_path, '.txt', None, self.content, dir_name = 'ImageClassification')
         merger.txt_writer()
          

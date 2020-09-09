@@ -62,6 +62,8 @@ class Printer:
     def create_content(self, *args, **kwargs): raise NotImplementedError
 
     def content(self, content):
+        if len(content) == 0:
+            content += ['None']
         content =  [self.prefix + c + self.suffix for c in lst_flatten(content)] 
         content = self.header + content if self.header else content 
         return [self.content_prefix] + content + [self.content_suffix]
@@ -71,10 +73,9 @@ class Printer:
         if self.save_path is None:
             return Path(self.parent + self.name)
         if os.path.isdir(self.save_path):
-            dir_name = get_dir_name(self.save_path)
+            dir_name = get_dir_name(self.save_path) if not hasattr(self, 'dir_name') else self.dir_name 
             filename = dir_name + self.verbose_name + self.ext 
-            return self.save_path/filename 
-                
+            return self.save_path/filename            
         return Path(self.save_path) 
             
     @property 
@@ -114,8 +115,8 @@ class Merger(Printer):
 
 class ContentMerger(Printer):
     verbose_name = '_app_info'
-    def __init__(self, filename, save_path, ext, handler, content):
-        super().__init__(filename, save_path, ext, handler)
+    def __init__(self, filename, save_path, ext, handler, content, **kwargs):
+        super().__init__(filename, save_path, ext, handler, **kwargs)
         self.content = content 
 
     def content(self):

@@ -2,9 +2,9 @@ from pathlib import Path
 import os 
 import re 
 import inspect 
-import importlib 
+import importlib.util 
 from ..handle_by_string import HandleFileByString, HandleFileByRegex
-from ..handle_by_tree import HandleFileByTree 
+from ..handle_by_tree import HandleFileByTree, ClassAttributeVisitor
 from typing import Iterable
 
 class DjangoFileHandler:
@@ -60,13 +60,14 @@ class UrlFileHandler(DjangoFileHandler):
     def _extract_url(self, lines):
         urls = []
         name_reg = r"name = ['a-zA-Z0-9_]+"
-        url_reg  = r"(\w+/)+((<)?[a-zA-Z0-9:/_-]+(>)?)+"
+        url_reg  = r"((<)?[a-zA-Z0-9:/_-]+(>)?/(\w+)?)+" #r"(\w+/)+((<)?[a-zA-Z0-9:/_-]+(>)?)+"
         for line in lines: 
             line = line.strip()
             if line.startswith('path') or line.startswith('re_path'):
                 name = re.search(name_reg, line)
                 url = re.search(url_reg, line)
-                urls.append((url.group(0), re.sub("'", "", name.group(0))))
+                url = url.group(0) if url else '/'
+                urls.append((url, re.sub("'", "", name.group(0))))
         return urls 
                 
 class ModelFileHandler(DjangoFileHandler):
@@ -75,32 +76,12 @@ class ModelFileHandler(DjangoFileHandler):
         classes = []
         handler = HandleFileByTree(self.filename)
         for class_ in handler.classes:
-            model_class = getattr(importlib.import_module(self.path_to_file), class_.name)
-            class_attrs =  self._extract_class_attrs(model_class)
-            class_asc   =  self._extract_associations(model_class, class_attrs)
-            assert len(class_asc) == len(class_attrs)
-            classes.append([class_.name, [[a, asc] for a, asc in zip(class_attrs, class_asc)]])
+            class_attributes = ClassAttributeVisitor(class_).class_attrs
+            classes.append([class_.name, class_attributes])
         self.class_attrs = classes
-
-    def _extract_associations(self, model, attr_list):
-        associations = []
-        for a in attr_list:
-            attr = getattr(model, a)
-            if inspect.isclass(type(attr)):
-                name = attr.__class__.__name__ + '(Class)' 
-                associations.append(name)
-        return associations
-
-    def _extract_class_attrs(self, clas):
-        class_attrs = []
-        for attr in dir(clas):
-            if not callable(getattr(clas, attr)):
-                if not attr.startswith('__') and not attr.startswith('_'):
-                    class_attrs.append(attr) 
-        return class_attrs
     
     def get_signals_used(self):
-        signal_func_re = r'[a-z_],'
+        signal_func_re = r'[a-z_]+,'
         sender_re = r'sender = \w+'
         signals_used = []
         with open(self.filename, 'r') as f:

@@ -2,7 +2,7 @@ import inspect
 import re 
 import ast 
 from pathlib import Path 
-from printer.tree_printers import ClassPrinter, FunctionPrinter, MergePrinter 
+
  
 class HandleFileByTree:
 
@@ -17,8 +17,41 @@ class HandleFileByTree:
         classes   = [n for n in self.node.body if isinstance(n, ast.ClassDef)] 
         return functions, classes 
 
+class ClassAttributeVisitor:
+    def __init__(self, class_node):
+        self.class_attrs = self.visit_ClassDef(class_node)
+
+    def visit_ClassDef(self, node):
+        lst = []
+        body = node.body 
+        for statement in body:
+            if isinstance(statement, ast.Assign):
+               if len(statement.targets) == 1:
+                   value = statement.value
+                   value = self._check_type(value)
+                   lst.append((statement.targets[0].id, value))
+        return lst
+    
+    def _check_type(self, value):
+        if isinstance(value, ast.Call):
+            if isinstance(value.func, ast.Attribute):
+                value = value.func.attr
+            elif isinstance(value.func, ast.Name):
+                value = value.func.id
+        elif isinstance(value, ast.List):
+            value = [e.s for e in value.elts]
+        elif isinstance(value, ast.Constant):
+            value = value.s
+        elif isinstance(value, ast.Name):
+            value = value.id
+        return value
+
+
 if __name__ == '__main__':
-    s = HandleFileByTree(filename)
-    s.print_info(merge = True)
+    f = ast.parse(open('D:\\Software Structure Generator\\test_files\\app\\api\\models.py', 'r').read())
+    # print(dir(ast.Call))
+    class_def = [n for n in f.body if isinstance(n, ast.ClassDef)]
+    print(ClassAttributeVisitor().visit_ClassDef(class_def[0]))
+  
         
                 

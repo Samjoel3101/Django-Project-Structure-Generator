@@ -9,12 +9,11 @@ from printer.styles import inline
 from printer.core import lst_flatten 
 
 from copy import deepcopy
-
 from functools import partial 
 
 
 INFO_DICT = {
-    'models': [[ModelFileHandler], [ModelInlinePrinter]],
+    'models': [[ModelFileHandler], [partial(ModelPrinter, style = inline)]],
     'forms':    [[HandleFileByTree], [ClassInlinePrinter]],
     'signals':  [[HandleFileByTree], [FunctionInlinePrinter]],
     'mixins':   [[HandleFileByTree], [ClassInlinePrinter]],

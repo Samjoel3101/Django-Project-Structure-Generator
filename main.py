@@ -15,7 +15,7 @@ if __name__ == '__main__':
     # printer.txt_writer()
     # print(f.class_attrs)
 
-    o = App_Structurer('D:\\Software Structure Generator\\test_files\\app\\api')
+    o = App_Structurer('D:\Deep Learning Websites\InspirAI\website_image_utils', 'D:\\Software Structure Generator\\test_files')
     # for c in o.content():
     #     print(c, end = '')
     o.print_info()
