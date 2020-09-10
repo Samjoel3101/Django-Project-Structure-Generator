@@ -5,6 +5,7 @@ from printer.tree_printers import *
 from printer.core import Merger 
 
 from pathlib import Path 
+import re
 
 class Generate_Structure:
     def __init__(self, filename, save_path, ext, handlers = [HandleFileByString, HandleFileByTree], 
@@ -32,6 +33,14 @@ class Generate_Structure:
     
     def content(self):
         return self.printer.content()
+
+    def headers(self):
+        headers = self.printer.headers()
+        reg = r'\w+' 
+        cleaned_headers = []
+        for header in headers:
+            cleaned_headers += [re.search(reg, header.strip()).group(0)] 
+        return cleaned_headers
 
 if __name__ == '__main__':
     filename = 'test_files/a.py'

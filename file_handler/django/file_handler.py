@@ -67,7 +67,8 @@ class UrlFileHandler(DjangoFileHandler):
                 name = re.search(name_reg, line)
                 url = re.search(url_reg, line)
                 url = url.group(0) if url else '/'
-                urls.append((url, re.sub("'", "", name.group(0))))
+                name = re.sub("'", "", name.group(0)) if name else 'name = name not provided'
+                urls.append((url, name))
         return urls 
                 
 class ModelFileHandler(DjangoFileHandler):

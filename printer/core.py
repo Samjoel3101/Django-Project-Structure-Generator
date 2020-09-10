@@ -1,9 +1,12 @@
 import ast
-import re 
-from pathlib import Path 
+import re
 import numpy as np 
-from . import styles
 import os
+
+from pathlib import Path 
+from functools import partial
+
+from . import styles
 
 def P(pth):
     if '\\' in pth:
@@ -112,6 +115,9 @@ class Merger(Printer):
         for printer in lst_flatten(self.printers):
             content += printer.content() 
         return content
+    
+    def headers(self):
+        return lst_flatten([p.header for p in lst_flatten(self.printers)])
 
 class ContentMerger(Printer):
     verbose_name = '_app_info'
@@ -121,6 +127,12 @@ class ContentMerger(Printer):
 
     def content(self):
         return self.content
+
+class DummyPrinter(Printer):
+    def content(self):
+        return super().content([]) 
+DummyPrinter = partial(DummyPrinter, style = styles.inline)
+ 
 if __name__ == '__main__':
     lt = [1, 2, 3, 4, [5, 6,[[7], 8]], [5, 6, 7, 8]]
     print(lst_flatten(lt))
