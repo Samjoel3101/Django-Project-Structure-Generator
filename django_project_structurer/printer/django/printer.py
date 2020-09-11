@@ -1,4 +1,4 @@
-from printer.core import Printer
+from ..core import Printer
 from functools import partial  
 from .. import styles 
 

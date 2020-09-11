@@ -1,5 +1,4 @@
 from .core import * 
-from file_handler.handle_by_string import HandleFileByString
 from functools import partial 
 from . import styles
 class ImportStatementPrinter(Printer):

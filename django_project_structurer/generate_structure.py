@@ -1,8 +1,8 @@
-from file_handler.handle_by_string import HandleFileByString
-from file_handler.handle_by_tree import HandleFileByTree  
-from printer.string_printers import ImportStatementPrinter 
-from printer.tree_printers import * 
-from printer.core import Merger 
+from .file_handler.handle_by_string import HandleFileByString
+from .file_handler.handle_by_tree import HandleFileByTree  
+from .printer.string_printers import ImportStatementPrinter 
+from .printer.tree_printers import * 
+from .printer.core import Merger 
 
 from pathlib import Path 
 import re
