@@ -1,5 +1,6 @@
-from .core import * 
 from functools import partial 
+
+from .core import * 
 from . import styles
 
 __all__ = ['ClassPrinter', 'FunctionPrinter', 'MergePrinter', 'ClassInlinePrinter', 'FunctionInlinePrinter']

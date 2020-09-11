@@ -27,6 +27,5 @@ def init_info_dict(info_dict):
     return info_dict 
 
 INFO_DICT = init_info_dict(INFO_DICT)
-# print(INFO_DICT)
 
 DJANGO_FILENAMES = ['models', 'forms', 'signals', 'mixins', 'urls']

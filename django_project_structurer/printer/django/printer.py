@@ -1,5 +1,6 @@
-from ..core import Printer
-from functools import partial  
+from functools import partial
+
+from ..core import Printer  
 from .. import styles 
 
 class UrlPrinter(Printer):

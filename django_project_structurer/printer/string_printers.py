@@ -1,6 +1,8 @@
-from .core import * 
-from functools import partial 
+from functools import partial
+
+from .core import *
 from . import styles
+
 class ImportStatementPrinter(Printer):
     verbose_name = '_import_info'
 
