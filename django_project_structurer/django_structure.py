@@ -1,6 +1,6 @@
-from file_handler.django.file_handler import UrlFileHandler 
-from printer.django.printer import UrlPrinter 
-from printer.core import Merger, lst_flatten, ContentMerger, DummyPrinter
+from .file_handler.django.file_handler import UrlFileHandler 
+from .printer.django.printer import UrlPrinter 
+from .printer.core import Merger, lst_flatten, ContentMerger, DummyPrinter
 
 from generate_structure import Generate_Structure 
 import config 
