@@ -9,7 +9,6 @@ setup(
     author='Sam Joel',
     author_email='samjoel.pb@gmail.com',
     license='unlicense',
-    packages=find_packages('django_project_structurer'),
-    namespace_packages = ['django_project_structurer'],
+    packages=find_packages(),
     zip_safe=False
 )
