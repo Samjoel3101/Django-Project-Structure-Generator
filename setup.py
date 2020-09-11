@@ -1,4 +1,4 @@
-from setuptools import setup 
+from setuptools import setup, find_namespace_packages
 
 
 setup(
@@ -9,6 +9,6 @@ setup(
     author='Sam Joel',
     author_email='samjoel.pb@gmail.com',
     license='unlicense',
-    packages=['django_project_structurer'],
+    packages=find_namespace_packages(include=['django_project_structurer.*']),
     zip_safe=False
 )
