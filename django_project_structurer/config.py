@@ -17,7 +17,12 @@ INFO_DICT = {
     'forms':    [[HandleFileByTree], [ClassInlinePrinter]],
     'signals':  [[HandleFileByTree], [FunctionInlinePrinter]],
     'mixins':   [[HandleFileByTree], [ClassInlinePrinter]],
-    'urls'  :   [[UrlFileHandler], [UrlInlinePrinter]]
+    'urls'  :   [[UrlFileHandler], [UrlInlinePrinter]],   
+}
+
+API_DICT = {
+    'urls'  :   [[UrlFileHandler], [UrlInlinePrinter]],
+    'serializers':[[HandleFileByTree], [ClassInlinePrinter]]
 }
 
 def init_info_dict(info_dict):
@@ -27,5 +32,7 @@ def init_info_dict(info_dict):
     return info_dict 
 
 INFO_DICT = init_info_dict(INFO_DICT)
+API_DICT = init_info_dict(API_DICT) 
 
 DJANGO_FILENAMES = ['models', 'forms', 'signals', 'mixins', 'urls']
+API_FILENAMES = ['urls', 'serializers']

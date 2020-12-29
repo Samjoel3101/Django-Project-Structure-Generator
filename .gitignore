@@ -3,3 +3,4 @@
 *.vscode
 __init__.py
 test.py
+*.txt
